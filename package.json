@@ -1,0 +1,30 @@
+{
+  "name": "markdown-generator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.2.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4",
+    "eslint": "^8",
+    "@rrrrrrrrrrr/eslint-config": "1.1.5",
+    "@rrrrrrrrrrr/prettier-config": "1.1.5",
+    "@typescript-eslint/parser": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "prettier": "^3.3.3",
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react-swc": "^3.7.0"
+  }
+}
