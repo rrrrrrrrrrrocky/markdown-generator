@@ -10,21 +10,36 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdxeditor/editor": "^3.11.0",
+    "@radix-ui/colors": "^3.0.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "dayjs": "^1.11.12",
+    "i18next": "^23.13.0",
+    "lexical": "^0.17.0",
+    "lucide-react": "^0.428.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@rrrrrrrrrrr/eslint-config": "1.1.5",
+    "@rrrrrrrrrrr/prettier-config": "1.1.5",
     "@types/node": "^22.2.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.5.4",
-    "eslint": "^8",
-    "@rrrrrrrrrrr/eslint-config": "1.1.5",
-    "@rrrrrrrrrrr/prettier-config": "1.1.5",
-    "@typescript-eslint/parser": "^8.0.1",
     "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "autoprefixer": "^10.4.20",
+    "clsx": "^2.1.1",
+    "eslint": "^8",
+    "postcss": "^8.4.41",
     "prettier": "^3.3.3",
-    "vite": "^5.4.0",
-    "@vitejs/plugin-react-swc": "^3.7.0"
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0"
   }
 }
