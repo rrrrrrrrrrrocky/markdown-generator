@@ -5,51 +5,52 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 
-import i18next, { InitOptions } from "i18next";
+// import i18next, { InitOptions } from "i18next";
 import "@/resource/style/global.css";
+import "@mantine/core/styles.css";
 
 locale("ko");
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(customParseFormat);
 
-const ko = {
-  toolbar: {
-    undo: "되돌리기 {{shortcut}}",
-    redo: "원래대로 {{shortcut}}",
-    blockTypeSelect: {
-      placeholder: "Select block type",
-    },
+// const ko = {
+//   toolbar: {
+//     undo: "되돌리기 {{shortcut}}",
+//     redo: "원래대로 {{shortcut}}",
+//     blockTypeSelect: {
+//       placeholder: "Select block type",
+//     },
 
-    blockTypes: {
-      paragraph: "p",
-      heading: "h{{level}}",
-      quote: "quote",
-    },
-  },
-};
+//     blockTypes: {
+//       paragraph: "p",
+//       heading: "h{{level}}",
+//       quote: "quote",
+//     },
+//   },
+// };
 
-const i18nDefaultOption: InitOptions<unknown> = {
-  // defaultLocale: "ko",
-  // locales: ["ko", "en"],
-  // localeConfigs: {
-  //   en: {
-  //     htmlLang: "en-GB",
-  //   },
-  //   ko: {
-  //     htmlLang: "ko-KR",
-  //   },
-  // },
-  lng: "ko",
-  debug: true,
-  resources: {
-    ko: {
-      translation: ko,
-    },
-  },
-};
+// const i18nDefaultOption: InitOptions<unknown> = {
+//   // defaultLocale: "ko",
+//   // locales: ["ko", "en"],
+//   // localeConfigs: {
+//   //   en: {
+//   //     htmlLang: "en-GB",
+//   //   },
+//   //   ko: {
+//   //     htmlLang: "ko-KR",
+//   //   },
+//   // },
+//   lng: "ko",
+//   debug: true,
+//   resources: {
+//     ko: {
+//       translation: ko,
+//     },
+//   },
+// };
 export const initializeGlobalApp = () => {
-  i18next.init(i18nDefaultOption);
+  // i18next.init(i18nDefaultOption);
 };
 
 export const initializeApp = () => {

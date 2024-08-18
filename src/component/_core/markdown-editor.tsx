@@ -1,5 +1,4 @@
 import "@mdxeditor/editor/style.css";
-import "@/resource/styles/globals.css";
 import {
   MDXEditor,
   listsPlugin,
@@ -21,82 +20,87 @@ import {
   KitchenSinkToolbar,
   markdownShortcutPlugin,
   SandpackConfig,
+  MDXEditorProps,
+  MDXEditorMethods,
 } from "@mdxeditor/editor";
-import { useRef } from "react";
-import i18next from "i18next";
+import { forwardRef } from "react";
+// import i18next from "i18next";
+import styles from "./markdown-editor.module.css";
 
-const MarkdownEditor = () => {
-  const ref = useRef<string>("");
+interface Props extends MDXEditorProps {
+  markdown: string;
+  onChange: (str: string) => void;
+}
 
-  return (
-    <MDXEditor
-      // className={editorStyle}
-      // contentEditableClassName=""
-      // contentEditableClassName="editor-container"
-      // className="dark-theme dark-editor"
-      // className="h-full border border-black"
-      // TODO: i18n 발전 필요
-      translation={(key, defaultValue, interpolations) => {
-        return i18next.t(key, defaultValue, interpolations) as string;
-      }}
-      autoFocus
-      markdown={ref.current}
-      onChange={(str) => {
-        ref.current = str;
-      }}
-      plugins={[
-        listsPlugin(),
-        quotePlugin(),
-        headingsPlugin(),
-        linkPlugin(),
-        linkDialogPlugin({
-          // linkAutocompleteSuggestions: [
-          //   "https://virtuoso.dev",
-          //   "https://mdxeditor.dev",
-          // ],
-        }),
-        imagePlugin({
-          imageUploadHandler: (file) => {
-            console.log("file >>", file);
-            return new Promise((resolve) => {
-              resolve(URL.createObjectURL(file));
-            });
-          },
-          // imageAutocompleteSuggestions: [
-          //   "https://picsum.photos/200/300",
-          //   "https://picsum.photos/200",
-          // ],
-        }),
-        tablePlugin(),
-        thematicBreakPlugin(),
-        frontmatterPlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: "txt" }),
-        sandpackPlugin({ sandpackConfig: simpleSandpackConfig }),
-        codeMirrorPlugin({
-          codeBlockLanguages: {
-            js: "JavaScript",
-            css: "CSS",
-            txt: "text",
-            tsx: "TypeScript",
-            html: "HTML",
-            shell: "Shell",
-          },
-        }),
-        directivesPlugin({
-          directiveDescriptors: [AdmonitionDirectiveDescriptor],
-        }),
-        diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
+export const MarkdownEditor = forwardRef<MDXEditorMethods, Props>(
+  ({ markdown, onChange, ...props }, ref) => {
+    return (
+      <MDXEditor
+        ref={ref}
+        placeholder="내용을 입력해주세요"
+        contentEditableClassName={styles.editor}
+        // TODO: i18n 발전 필요
+        // translation={(key, defaultValue, interpolations) => {
+        //   return i18next.t(key, defaultValue, interpolations) as string;
+        // }}
+        autoFocus
+        markdown={markdown}
+        onChange={(str) => {
+          onChange(str);
+        }}
+        plugins={[
+          listsPlugin(),
+          quotePlugin(),
+          headingsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin({
+            // linkAutocompleteSuggestions: [
+            //   "https://virtuoso.dev",
+            //   "https://mdxeditor.dev",
+            // ],
+          }),
+          imagePlugin({
+            imageUploadHandler: (file) => {
+              console.log("file >>", file);
+              return new Promise((resolve) => {
+                resolve(URL.createObjectURL(file));
+              });
+            },
+            // imageAutocompleteSuggestions: [
+            //   "https://picsum.photos/200/300",
+            //   "https://picsum.photos/200",
+            // ],
+          }),
+          tablePlugin(),
+          thematicBreakPlugin(),
+          frontmatterPlugin(),
+          codeBlockPlugin({ defaultCodeBlockLanguage: "txt" }),
+          sandpackPlugin({ sandpackConfig: simpleSandpackConfig }),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              js: "JavaScript",
+              css: "CSS",
+              txt: "text",
+              tsx: "TypeScript",
+              html: "HTML",
+              shell: "Shell",
+            },
+          }),
+          directivesPlugin({
+            directiveDescriptors: [AdmonitionDirectiveDescriptor],
+          }),
+          diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
 
-        toolbarPlugin({
-          toolbarContents: () => <KitchenSinkToolbar />,
-        }),
-        markdownShortcutPlugin(),
-      ]}
-    />
-  );
-};
-
-export default MarkdownEditor;
+          toolbarPlugin({
+            toolbarContents: () => <KitchenSinkToolbar />,
+          }),
+          markdownShortcutPlugin(),
+        ]}
+        {...props}
+      />
+    );
+  }
+);
 
 const defaultSnippetContent = `
 export default function App() {
