@@ -1,0 +1,16 @@
+.container {
+  position: relative;
+}
+.container__textarea {
+  background: transparent;
+  position: relative;
+}
+.container__mirror {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  color: transparent;
+}

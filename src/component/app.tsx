@@ -14,7 +14,7 @@ initializeGlobalApp();
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
-  console.log("session >>>", session);
+  // console.log("session >>>", session);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

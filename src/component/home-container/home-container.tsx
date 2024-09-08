@@ -12,11 +12,14 @@ import {
 } from "@mantine/core";
 
 import { useMediaQuery } from "@mantine/hooks";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import supabase from "@/script/util/supabase";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
+// import SimpleMde from "simplemde";
+import MarkdownEditor from "./markdown-editor";
+import TextareaEditor from "./textarea-editor";
 
 interface FormValues {
   title: string;
@@ -53,8 +56,8 @@ const HomeContainer = () => {
   });
 
   const getPosts = async () => {
-    const res = await supabase.from("posts").select();
-    console.log("res >>", res);
+    // const res = await supabase.from("posts").select();
+    // console.log("res >>", res);
   };
 
   useEffect(() => {
@@ -106,6 +109,9 @@ const HomeContainer = () => {
     const res = await supabase.from("posts").insert({ ...data });
     console.log("res .>>", res);
   };
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // new SimpleMde({ element: textareaRef.current! });
 
   return (
     <Container fluid px={0} component="main" h="100vh" w="100%">
@@ -247,6 +253,10 @@ const HomeContainer = () => {
             }}
           />
 
+          {/* <textarea id="MyID" ref={textareaRef} /> */}
+          <MarkdownEditor />
+          {/* <TextareaEditor /> */}
+          {/* 
           <Controller
             control={control}
             name="markdown"
@@ -277,7 +287,7 @@ const HomeContainer = () => {
                 />
               );
             }}
-          />
+          /> */}
         </Flex>
       </Stack>
     </Container>
