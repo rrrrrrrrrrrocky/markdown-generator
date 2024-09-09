@@ -1,4 +1,6 @@
+import { markedClientParse } from "@/script/util/markdown-utils";
 import { AppShellSection } from "@mantine/core";
+import { marked } from "marked";
 import {
   createElement,
   FormEventHandler,
@@ -7,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Preview from "./preview";
 
 // const EditableDiv = React.forwardRef<HTMLDivElement, EditableDivProps>(
 //   ({ className, ...props }: EditableDivProps, ref) => {
@@ -40,12 +43,13 @@ import {
 const MarkdownEditor = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState<string>("");
   const [block, setBlock] = useState([
     {
       line: 1,
       html: "",
-      tag: "div",
+      tag: "p",
+      content: "213124",
       flag: 0,
       inlineBlocks: undefined,
       previousKey: null,
@@ -67,15 +71,19 @@ const MarkdownEditor = () => {
   });
   // console.log("cursor >>", cursor);
 
-  const onCursor = (
-    el: HTMLDivElement | null
-  ): { start: number; end: number } | undefined => {
+  interface OnCursor extends Range {
+    isCollapsed?: boolean;
+  }
+
+  const onCursor = (el: HTMLDivElement | null): OnCursor | undefined => {
     if (!el) return;
-    const selection = window.getSelection && window.getSelection();
+    const selection = window.getSelection();
     console.log("selection >>", selection);
 
     const range = selection?.getRangeAt(0);
+    const newRange = new Range();
     console.log("selection?.getRangeAt(0) >>", selection?.getRangeAt(0));
+    console.log("newRange >>", newRange);
 
     const start = range?.startOffset || 1;
     const end = range?.endOffset || 1;
@@ -84,20 +92,34 @@ const MarkdownEditor = () => {
     console.log("clientRects >>", clientRects);
     // setCursor({ start, end });
 
-    return { start, end, clientRects, isCollapsed: selection?.isCollapsed };
+    return range
+      ? { ...range, isCollapsed: selection?.isCollapsed }
+      : undefined;
   };
 
   const onInput: FormEventHandler<HTMLDivElement> = (e) => {
-    const { start, end } = onCursor(divRef.current);
+    const cursor = onCursor(divRef.current);
+
+    console.log("no >>", cursor?.startContainer);
+
+    console.log("divRef.current >", divRef);
+    // console.log("divRef.current >", JSON.stringify(divRef.current?.innerHTML));
+
+    // setValue(divRef.current);
+    setValue(divRef.current?.innerText || "");
+
+    // setBlock((prev) => {
+    //   return;
+    // });
 
     setCursor({
       start: {
         line: 1,
-        offset: start,
+        offset: cursor?.startOffset || 1,
       },
       end: {
         line: 1,
-        offset: end,
+        offset: cursor?.endOffset || 1,
       },
     });
   };
@@ -124,171 +146,145 @@ const MarkdownEditor = () => {
         justifyContent: "center",
         flexDirection: "column",
       }}>
-      <p>{JSON.stringify(value)}</p>
+      {/* <div>{marked.parse(value)}</div> */}
+      <div>
+        <Preview innerText={value} />
+      </div>
+      {/* <div>{markedClientParse(value)}</div> */}
       <div
-        suppressContentEditableWarning
         ref={divRef}
         contentEditable
-        // content={value}
         onInput={onInput}
-        onMouseUp={onMouseUp}
-        onMouseDown={onMouseDown}
         style={{
           height: "100%",
           border: "1px solid gray",
           padding: "8px",
         }}
-        // content={ block}
-        onKeyDown={(e) => {
-          if (!divRef.current) return;
-          if (e.key === "Up") {
-            setCursor((prev) => {
-              const isFirstLine = prev.start.line === 1;
-              return {
-                start: {
-                  line: isFirstLine ? 1 : prev.start.line - 1,
-                  offset:
-                    prev.start.offset >
-                    (divRef.current?.textContent?.length || 0)
-                      ? divRef.current?.textContent
-                      : prev.start.offset,
-                },
-                end: {
-                  line: isFirstLine ? 1 : prev.start.line - 1,
-                  offset:
-                    prev.start.offset >
-                    (divRef.current?.textContent?.length || 0)
-                      ? divRef.current?.textContent
-                      : prev.start.offset,
-                },
-              };
-            });
-          }
-          // if (e.key === "Enter") {
-          //   setBlock((prev) => {
-          //     // const selectedLine = prev.find((data)=> data.line === cu)
-          //     return [
-          //       ...prev,
-          //       {
-          //         // line: prev.line + 1,
-          //         html: "",
-          //         tag: "div",
-          //         flag: 0,
-          //         previousKey: null,
-          //         actionMenuOpen: false,
-          //         actionMenuPosition: { x: null, y: null },
-          //         selectionStart: 0,
-          //         selectionEnd: 0,
-          //       },
-          //     ];
-          //   });
-          // }
-          if (e.key === "Shift-Tab") {
-            e.preventDefault(); // 기본 동작 방지
-            console.log("shift tab");
-          }
-          // if(e.)
-          if (e.key === "Tab") {
-            e.preventDefault(); // 기본 동작 방지
-            console.log("divRef >>", divRef.current?.childNodes);
-            // const textarea = divRef.current;
-            // const start = textarea.selectionStart;
-            // const end = textarea.selectionEnd;
-
-            // const JsonValue = JSON.stringify(value);
-            // // const JsonValue = JSON.stringify(value);
-
-            // console.log(value.split("\\n"));
-            // console.log(JSON.parse(JsonValue));
-
-            // // 현재 줄의 시작 인덱스 찾기
-            // const lineStart = value.lastIndexOf(" ", start) + 1;
-            // // const lineStart = JsonValue.lastIndexOf("\\n", start) + 1;
-
-            // console.log("lineStart >>", lineStart);
-
-            // // 새로운 값 생성
-            // const newValue =
-            //   value.substring(0, lineStart) +
-            //   "  " + // 맨 앞에 스페이스 2칸 추가
-            //   value.substring(lineStart, start) +
-            //   value.substring(end);
-
-            // setValue(newValue);
-            // // setValue(JSON.parse(newValue));
-
-            // // textarea.value = newValue;
-            // textarea.selectionStart = lineStart + 2;
-            // textarea.selectionEnd = lineStart + 2;
-          }
-        }}>
-        {/* <p
-          style={{
-            background: "red",
-          }}>
-          asdasd
-        </p> */}
-        {/* {value} */}
-        {block.map(({ tag, inlineBlocks }) => {
-          return createElement(tag, {
-            key: useId(),
-            children: inlineBlocks && inlineBlocks,
-          });
-          // return tag;
-        })}
-      </div>
-      {/* <textarea
-        style={{
-          height: "100%",
-        }}
-        ref={textareaRef}
-        onKeyDown={(e) => {
-          if (!textareaRef.current) return;
-          if (e.key === "Shift-Tab") {
-            e.preventDefault(); // 기본 동작 방지
-            console.log("shift tab");
-          }
-          if (e.key === "Tab") {
-            e.preventDefault(); // 기본 동작 방지
-
-            const textarea = textareaRef.current;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-
-            const JsonValue = JSON.stringify(value);
-            // const JsonValue = JSON.stringify(value);
-
-            console.log(value.split("\\n"));
-            console.log(JSON.parse(JsonValue));
-
-            // 현재 줄의 시작 인덱스 찾기
-            const lineStart = value.lastIndexOf(" ", start) + 1;
-            // const lineStart = JsonValue.lastIndexOf("\\n", start) + 1;
-
-            console.log("lineStart >>", lineStart);
-
-            // 새로운 값 생성
-            const newValue =
-              value.substring(0, lineStart) +
-              "  " + // 맨 앞에 스페이스 2칸 추가
-              value.substring(lineStart, start) +
-              value.substring(end);
-
-            setValue(newValue);
-            // setValue(JSON.parse(newValue));
-
-            // textarea.value = newValue;
-            textarea.selectionStart = lineStart + 2;
-            textarea.selectionEnd = lineStart + 2;
-          }
-        }}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
-      /> */}
+      />
     </div>
   );
+  //   <div
+  //     style={{
+  //       height: "100%",
+  //       flex: 1,
+  //       display: "flex",
+  //       justifyContent: "center",
+  //       flexDirection: "column",
+  //     }}>
+  //     <p>{JSON.stringify(value)}</p>
+  //     <div
+  //       suppressContentEditableWarning
+  //       ref={divRef}
+  //       contentEditable
+  //       // content={value}
+  //       onInput={onInput}
+  //       onMouseUp={onMouseUp}
+  //       onMouseDown={onMouseDown}
+  //       style={{
+  //         height: "100%",
+  //         border: "1px solid gray",
+  //         padding: "8px",
+  //       }}
+  //       // content={ block}
+  //       onKeyDown={(e) => {
+  //         if (!divRef.current) return;
+  //         if (e.key === "Up") {
+  //           setCursor((prev) => {
+  //             const isFirstLine = prev.start.line === 1;
+  //             return {
+  //               start: {
+  //                 line: isFirstLine ? 1 : prev.start.line - 1,
+  //                 offset:
+  //                   prev.start.offset >
+  //                   (divRef.current?.textContent?.length || 0)
+  //                     ? divRef.current?.textContent
+  //                     : prev.start.offset,
+  //               },
+  //               end: {
+  //                 line: isFirstLine ? 1 : prev.start.line - 1,
+  //                 offset:
+  //                   prev.start.offset >
+  //                   (divRef.current?.textContent?.length || 0)
+  //                     ? divRef.current?.textContent
+  //                     : prev.start.offset,
+  //               },
+  //             };
+  //           });
+  //         }
+  //         // if (e.key === "Enter") {
+  //         //   setBlock((prev) => {
+  //         //     // const selectedLine = prev.find((data)=> data.line === cu)
+  //         //     return [
+  //         //       ...prev,
+  //         //       {
+  //         //         // line: prev.line + 1,
+  //         //         html: "",
+  //         //         tag: "div",
+  //         //         flag: 0,
+  //         //         previousKey: null,
+  //         //         actionMenuOpen: false,
+  //         //         actionMenuPosition: { x: null, y: null },
+  //         //         selectionStart: 0,
+  //         //         selectionEnd: 0,
+  //         //       },
+  //         //     ];
+  //         //   });
+  //         // }
+  //         if (e.key === "Shift-Tab") {
+  //           e.preventDefault(); // 기본 동작 방지
+  //           console.log("shift tab");
+  //         }
+  //         // if(e.)
+  //         if (e.key === "Tab") {
+  //           e.preventDefault(); // 기본 동작 방지
+  //           console.log("divRef >>", divRef.current?.childNodes);
+  //           // const textarea = divRef.current;
+  //           // const start = textarea.selectionStart;
+  //           // const end = textarea.selectionEnd;
+
+  //           // const JsonValue = JSON.stringify(value);
+  //           // // const JsonValue = JSON.stringify(value);
+
+  //           // console.log(value.split("\\n"));
+  //           // console.log(JSON.parse(JsonValue));
+
+  //           // // 현재 줄의 시작 인덱스 찾기
+  //           // const lineStart = value.lastIndexOf(" ", start) + 1;
+  //           // // const lineStart = JsonValue.lastIndexOf("\\n", start) + 1;
+
+  //           // console.log("lineStart >>", lineStart);
+
+  //           // // 새로운 값 생성
+  //           // const newValue =
+  //           //   value.substring(0, lineStart) +
+  //           //   "  " + // 맨 앞에 스페이스 2칸 추가
+  //           //   value.substring(lineStart, start) +
+  //           //   value.substring(end);
+
+  //           // setValue(newValue);
+  //           // // setValue(JSON.parse(newValue));
+
+  //           // // textarea.value = newValue;
+  //           // textarea.selectionStart = lineStart + 2;
+  //           // textarea.selectionEnd = lineStart + 2;
+  //         }
+  //       }}>
+  //       {/* <p
+  //         style={{
+  //           background: "red",
+  //         }}>
+  //         asdasd
+  //       </p> */}
+  //       {block.map(({ tag, inlineBlocks }) => {
+  //         return createElement(tag, {
+  //           key: useId(),
+  //           children: inlineBlocks && inlineBlocks,
+  //         });
+  //         // return tag;
+  //       })}
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default MarkdownEditor;
