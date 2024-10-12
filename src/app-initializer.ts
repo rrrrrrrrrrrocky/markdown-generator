@@ -1,13 +1,12 @@
 import "dayjs/locale/ko";
+// import i18next, { InitOptions } from "i18next";
+// import "@/resource/style/global.css";
+import "@/resource/style/global.css";
 
 import dayjs, { locale } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-
-// import i18next, { InitOptions } from "i18next";
-import "@/resource/style/global.css";
-import "@mantine/core/styles.css";
 
 locale("ko");
 dayjs.extend(utc);

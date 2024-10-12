@@ -1,42 +1,35 @@
-import { marked, RendererObject } from "marked";
-import Prism from "prismjs";
+// import "@/component/_common/simple-markdown-editor/highlight/github.min.css";
+// import "@/component/_common/simple-markdown-editor/github-markdown-css/light.css";
 
-// import loadLanguages from "prismjs/components";
-import DOMPurify from "dompurify";
+import rehypeHighlight from "rehype-highlight";
+import rehypeSanitize from "rehype-sanitize";
+import rehypeSlug from "rehype-slug";
+import rehypeStringify from "rehype-stringify";
+import { remark } from "remark";
+import breaks from "remark-breaks";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+import markdown from "remark-parse";
+import remarkRehype from "remark-rehype";
 
-// loadLanguages(["bash", "sql"]);
+// import hljs from "@/component/_common/simple-markdown-editor/highlight/highlight.js";
 
-const commonMarkedSettings = () => {
-  // supported-languages: https://prismjs.com/#supported-languages
+export const markdownToHtml = async (value: string) => {
+  const processor = remark()
+    .data("settings", {
+      allowDangerousHtml: true,
+    })
+    .use(markdown)
+    .use(breaks)
+    .use(remarkGfm, {})
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeSanitize)
+    .use(rehypeSlug)
+    .use(remarkFrontmatter)
+    .use(rehypeHighlight) // 코드 하이라이트 적용
+    .use(rehypeStringify);
 
-  console.log("loadLanguages >>", Prism.languages);
-  const renderer: RendererObject = {
-    code({ text, lang }) {
-      const language = lang || "";
-      try {
-        if (Prism.languages[language]) {
-          return `<pre class="language-${language}"><code class="language-${language}">${Prism.highlight(text, Prism.languages[language], language)}</code></pre>`;
-        } else {
-          // Handle unsupported language gracefully
-          console.warn(`Unsupported language: ${language}`);
-          return `<pre><code>${text}</code></pre>`; // Basic code display
-        }
-      } catch (err) {
-        console.error(`Error highlighting code: ${err}`);
-        return false; // Or handle the error differently
-      }
-    },
-  };
+  const file = await processor.process(value);
 
-  marked.use({ renderer });
-
-  return marked;
-};
-
-export const markedClientParse = (value: string) => {
-  commonMarkedSettings();
-
-  const htmlString = marked.parse(value);
-
-  return DOMPurify.sanitize(htmlString as string);
+  return file.toString();
 };
